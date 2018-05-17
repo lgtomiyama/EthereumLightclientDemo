@@ -5,7 +5,6 @@
  */
 import './shim.js'
 import React, { Component } from 'react';
-import { Button,Alert ,AsyncStorage} from 'react-native';
 
 import Web3 from 'web3';
 import lightwallet from 'eth-lightwallet';
@@ -13,9 +12,15 @@ import HookedWeb3Provider from 'hooked-web3-provider';
 import {
   Platform,
   StyleSheet,
+  AppRegistry,
+  TouchableOpacity,
+  Linking,
   Text,
-  View
+  View,
+  Button,Alert ,AsyncStorage
 } from 'react-native';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import Permissions from 'react-native-permissions';
 import crypto from 'react-native-crypto';
 type Props = {};
 export default class App extends Component<Props> {
@@ -69,9 +74,26 @@ export default class App extends Component<Props> {
       return { balanceText: value};
     });
   }
+    onSuccess(e) {
+    Linking
+      .openURL(e.data)
+      .catch(err => console.error('An error occured', err));
+  }
   async getBalance(){
    
 
+  }
+  componentDidMount(){
+    this._requestCammeraPermission();
+  }
+  _requestCammeraPermission = async () => {
+    Permissions.checkMultiple(['camera', 'photo']).then(response => {
+        //response is an object mapping type to permission
+        this.setState({
+          cameraPermission: response.camera,
+          photoPermission: response.photo,
+        })
+      });
   }
   render() {
     
@@ -101,7 +123,21 @@ export default class App extends Component<Props> {
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           />
+                <QRCodeScanner
+        onRead={this.onSuccess.bind(this)}
+        topContent={
+          <Text style={styles.centerText}>
+            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+          </Text>
+        }
+        bottomContent={
+          <TouchableOpacity style={styles.buttonTouchable}>
+            <Text style={styles.buttonText}>OK. Got it!</Text>
+          </TouchableOpacity>
+        }
+      />
       </View>
+
     );
   }
 }
@@ -123,4 +159,5 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+
 });
