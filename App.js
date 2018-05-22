@@ -14,7 +14,7 @@ const AppStack = StackNavigator(
   {
     Home: {
       screen: HomeScreen,
-      navigationOptions: { ScannerScreen: null },
+      navigationOptions: { HomeScreen: null },
 
     },
     Scanner: {
