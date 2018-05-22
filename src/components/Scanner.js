@@ -4,6 +4,7 @@ import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './Home'
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Permissions from 'react-native-permissions';
+
 class ScannerScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -11,6 +12,7 @@ class ScannerScreen extends React.Component {
       qrScanned:"",
     };
   }
+  
   componentDidMount(){
     this._requestCammeraPermission();
   }
