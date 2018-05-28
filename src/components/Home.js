@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { StyleSheet,View, Text,Button ,AsyncStorage, TextInput} from 'react-native';
+import { StyleSheet,View, Text,Button ,AsyncStorage,ActivityIndicator, TextInput} from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import WalletService from '../service/walletService';
 import { ActionButton } from 'react-native-material-ui';
@@ -14,7 +14,8 @@ export default class HomeScreen extends React.Component {
       balanceText: "",
       accountText: "",
       isLogged: false,
-      senha: ""
+      senha: "",
+      processing: true,
     };
 
   }
@@ -32,52 +33,63 @@ export default class HomeScreen extends React.Component {
             isLogged: true,
             accountText: result.account,
             balanceText: result.balance,
+            
           });
       }
+      this.setState({processing:false,});
     });
   }
   render() {
-    if(this.state.isLogged){
-      return (
-        <View style={styles.container}>
-      
-          <Text style={styles.instructions}>
-            Seu saldo é: 
-          </Text>
-          <Text style={styles.instructions}>
-            {this.state.balanceText}</Text>
-
-          <QRCode
-            value={this.state.accountText}
-            bgColor='purple'
-            fgColor='white'/>
-
-          <ActionButton
-            onPress={(e) => { this.clickMenu(e); }}
-            actions={[{ name: 'perfil', icon: 'account-circle', label: 'Perfil'},
-                      { name: 'quiz', icon: 'games', label: 'Quiz' },
-                      { name: 'comprar', icon: 'local-grocery-store', label: 'Comprar' },
-                      { name: 'transferir', icon: 'send', label: 'Transferir' },]}
-            icon="account-balance-wallet"
-            transition="speedDial"
-            />
-        </View>
-
-      );
-    }else{
+    if(this.state.processing){
       return(
         <View style={styles.container}>
-          <Text style={styles.instructions}>
-              Crie uma conta!{'\n'}
-              Insira sua senha:
-          </Text>
-          <TextInput secureTextEntry={true} 
-            style={{height: 40, width:'60 %', borderColor: 'gray', borderWidth: 1}}
-            onChangeText={(text) => this.setState({senha: text})}
-          />
-          <Button title="Login" onPress={()=> this.login()} />
+          <ActivityIndicator size="large" color="#0000ff" />
         </View>
       );
+    }
+    else{
+      if(this.state.isLogged){
+        return (
+          <View style={styles.container}>
+          
+            <Text style={styles.instructions}>
+              Seu saldo é: 
+            </Text>
+            <Text style={styles.instructions}>
+              {this.state.balanceText}</Text>
+
+            <QRCode
+              value={this.state.accountText}
+              bgColor='purple'
+              fgColor='white'/>
+
+            <ActionButton
+              onPress={(e) => { this.clickMenu(e); }}
+              actions={[{ name: 'perfil', icon: 'account-circle', label: 'Perfil'},
+                        { name: 'quiz', icon: 'games', label: 'Quiz' },
+                        { name: 'comprar', icon: 'local-grocery-store', label: 'Comprar' },
+                        { name: 'transferir', icon: 'send', label: 'Transferir' },]}
+              icon="account-balance-wallet"
+              transition="speedDial"
+              />
+          </View>
+
+        );
+      }else{
+        return(
+          <View style={styles.container}>
+            <Text style={styles.instructions}>
+                Crie uma conta!{'\n'}
+                Insira sua senha:
+            </Text>
+            <TextInput secureTextEntry={true} 
+              style={{height: 40, width:'60 %', borderColor: 'gray', borderWidth: 1}}
+              onChangeText={(text) => this.setState({senha: text})}
+            />
+            <Button title="Login" onPress={()=> this.login()} />
+          </View>
+        );
+      }
     }
   }
   async clickMenu(e){
@@ -100,25 +112,31 @@ export default class HomeScreen extends React.Component {
 
   }
   login(){
+    this.setState({processing:true});
      this.settingsService.createAccount(this.state.senha,null).then(() => {
       this.reloadAcc();
+      this.setState({processing:false,});
     });
   }
   reloadAcc(balance){
+    this.setState({processing:true,});
     this.settingsService.getWalletAdderess().then((account) => {
       console.log('Acc:'+ account);
       this.setState({ 
         accountText: account,
-        isLogged: true
+        isLogged: true,
+        processing:false,
       });
       this.reloadBalance();
     });
   }
   reloadBalance(){
+    this.setState({processing:true,});
     this.settingsService.getWalletBallance().then((balance) => {
       console.log(balance);
       this.setState({ 
         balanceText: balance,
+        processing:false,
       });
     });
   }
