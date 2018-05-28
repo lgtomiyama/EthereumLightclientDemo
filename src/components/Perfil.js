@@ -30,28 +30,29 @@ export default class PerfilScreen extends React.Component {
       
         <View style={styles.container}>
             <TextInput 
-              secureTextEntry={true} 
               placeholder='Nome'
               style={styles.textInput}
-              onChangeText={(text) => this.setState({senha: text})}
+              onChangeText={(text) => this.setState({nome: text})}
             />
             <TextInput 
-              secureTextEntry={true} 
               placeholder='Empresa'
               style={styles.textInput}
-              onChangeText={(text) => this.setState({senha: text})}
+              onChangeText={(text) => this.setState({empresa: text})}
             />
             <TextInput 
-              secureTextEntry={true} 
               placeholder='Telefone'
               style={styles.textInput}
-              onChangeText={(text) => this.setState({senha: text})}
+              onChangeText={(text) => this.setState({telefone: text})}
             />
             <TextInput 
-              secureTextEntry={true} 
+              placeholder='Cargo'
+              style={styles.textInput}
+              onChangeText={(text) => this.setState({cargo: text})}
+            />
+            <TextInput 
               placeholder='e-mail'
               style={styles.textInput}
-              onChangeText={(text) => this.setState({senha: text})}
+              onChangeText={(text) => this.setState({email: text})}
             />
             <Button 
               primary 
