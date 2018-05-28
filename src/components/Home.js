@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { StyleSheet,View, Text,Button ,AsyncStorage,ActivityIndicator, TextInput} from 'react-native';
+import { StyleSheet,View, Text ,AsyncStorage,ActivityIndicator, TextInput} from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import WalletService from '../service/walletService';
-import { ActionButton } from 'react-native-material-ui';
+import { ActionButton,Button } from 'react-native-material-ui';
 import QRCode from 'react-native-qrcode';
 let settingsService;
 export default class HomeScreen extends React.Component {
@@ -80,13 +80,19 @@ export default class HomeScreen extends React.Component {
           <View style={styles.container}>
             <Text style={styles.instructions}>
                 Crie uma conta!{'\n'}
-                Insira sua senha:
+                
             </Text>
-            <TextInput secureTextEntry={true} 
-              style={{height: 40, width:'60 %', borderColor: 'gray', borderWidth: 1}}
+            <TextInput 
+              secureTextEntry={true} 
+              placeholder='Insira sua senha'
+              style={{height: 40, width:'60 %', borderColor: 'gray'}}
               onChangeText={(text) => this.setState({senha: text})}
             />
-            <Button title="Login" onPress={()=> this.login()} />
+            <Button 
+            primary 
+            text="Primary" 
+            title="Login"
+            onPress={()=> this.login()} />
           </View>
         );
       }
@@ -95,7 +101,7 @@ export default class HomeScreen extends React.Component {
   async clickMenu(e){
     switch (e) {
       case 'perfil':
-        
+        this.props.navigation.navigate('Perfil');
       break;
       case 'quiz':
 

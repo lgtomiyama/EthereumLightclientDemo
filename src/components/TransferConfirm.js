@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text,Button,StyleSheet,TouchableOpacity,ActivityIndicator } from 'react-native';
+import { View, Text,StyleSheet,TouchableOpacity,ActivityIndicator } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './Home'
-import { ActionButton } from 'react-native-material-ui';
+import { ActionButton,Button } from 'react-native-material-ui';
 import WalletService from '../service/walletService';
 export default class TransferConfirmScreen extends React.Component {
   constructor(props) {
@@ -34,7 +34,9 @@ export default class TransferConfirmScreen extends React.Component {
           onPress={() => this.props.navigation.navigate('Home')}/>
           <Text>Transferir para:{'\n'}
           {this.props.navigation.state.params}</Text>
-          <Button title="Transferir 1" onPress={()=> this.transfer()} />
+          <Button 
+              primary 
+              text="Transferir 1"  title="" onPress={()=> this.transfer()} />
         </View>
 
       );

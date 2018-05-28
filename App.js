@@ -4,6 +4,7 @@ import HomeScreen from './src/components/Home';
 import ScannerScreen from './src/components/Scanner';
 import TransferCaptureScreen from './src/components/TransferCapture';
 import TransferConfirmScreen from './src/components/TransferConfirm';
+import PerfilScreen from './src/components/Perfil';
 import WalletService from './src/service/walletService';
 import {
   StackNavigator,
@@ -36,6 +37,11 @@ const AppStack = StackNavigator(
     Home: {
       screen: HomeScreen,
       navigationOptions: { HomeScreen: null },
+
+    },
+    Perfil: {
+      screen: PerfilScreen,
+      navigationOptions: { PerfilScreen: null },
 
     },
     Scanner: {
