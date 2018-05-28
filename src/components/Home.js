@@ -26,7 +26,7 @@ export default class HomeScreen extends React.Component {
     this.settingsService = WalletService.getInstance();
     var balance;
     this.settingsService.getLogged().then((result) => {
-      console.log('Logado:'+result);
+      console.log('Logado:'+JSON.stringify(result));
       if(result.account){
         this.setState(
           {

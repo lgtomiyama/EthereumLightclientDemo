@@ -1,27 +1,51 @@
 import React from 'react';
-import { View, Text,Button,StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text,Button,StyleSheet,TouchableOpacity,ActivityIndicator } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './Home'
 import { ActionButton } from 'react-native-material-ui';
-
+import WalletService from '../service/walletService';
 export default class TransferConfirmScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.onChange = this.onChange.bind(this);
+    this.state = {
+      processing: false,
+    };
+  }
+  onChange(state) {
+    this.setState(state);
   }
   componentDidMount(){
-    
+    this.settingsService = WalletService.getInstance();
   }
   render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActionButton
-        icon='arrow-back'
-        onPress={() => this.props.navigation.navigate('Home')}/>
-        <Text>Transferir para:{'\n'}
-        {this.props.navigation.state.params}</Text>
-      </View>
+    if(this.state.processing){
+      return(
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }
+    else{
+      return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActionButton
+          icon='arrow-back'
+          onPress={() => this.props.navigation.navigate('Home')}/>
+          <Text>Transferir para:{'\n'}
+          {this.props.navigation.state.params}</Text>
+          <Button title="Transferir 1" onPress={()=> this.transfer()} />
+        </View>
 
-    );
+      );
+    }
+  }
+  transfer(){
+    this.setState({processing:true});
+      this.settingsService.transfer(this.props.navigation.state.params,1).then(() => 
+      {
+        this.setState({processing:false,});
+      });
   }
  
 }

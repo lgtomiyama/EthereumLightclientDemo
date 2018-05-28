@@ -34,8 +34,8 @@ class WalletService {
         return cAddress;
     }
     async createAccount(password, seedText){
-             // var pwd = 'everis@2018';
-        // var seed = 'hungry gentle confirm before glue office pen tissue accuse fix black thunder';
+        password = 'everis@2018';
+        seedText = 'hungry gentle confirm before glue office pen tissue accuse fix black thunder';
         if(seedText === null){
             seedText = lightwallet.keystore.generateRandomSeed();
         }
@@ -121,13 +121,55 @@ class WalletService {
         });
         return acBalance;
     }
+    async transfer(toAccount,transferValue){
+        const password = await AsyncStorage.getItem('walletPassword');
+        const seedText = await AsyncStorage.getItem('walletSeed');
+        console.log('senha' + password);
+        console.log('seedText' + seedText);
+        await lightwallet.keystore.createVault({
+            password: password,
+            seedPhrase: seedText,
+            hdPathString: "m/0'/0'/0'"
+        }, function (err, ks ) {
+            ks.keyFromPassword(password, function (err, pwDerivedKey) {
+                if (!ks.isDerivedKeyCorrect(pwDerivedKey)) {
+                    throw new Error("Incorrect derived key!");
+                }
+                try {
+                    ks.generateNewAddress(pwDerivedKey, 1);
+                } catch (err) {
+                    console.log(err);
+                    console.trace();
+                }
+                this.address = ks.getAddresses()[0];
+                this.prv_key = ks.exportPrivateKey(this.address, pwDerivedKey);
+                console.log('Created w3: ', this.address, this.prv_key);
+                var web3Provider = new HookedWeb3Provider({
+                    host: "https://net.everchain.tk",
+                    transaction_signer: ks
+                });
+                console.log('to: '+toAccount);
+                console.log('v: '+transferValue);
+                web3.eth.sendTransaction({                    
+                    from: this.address,
+                    to: toAccount, 
+                    value: transferValue}, async (err, data) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(data);
+                        }
+                    });
+            });
+        });
+    }
     async createWeb3(){
         const password = await AsyncStorage.getItem('walletPassword');
         const seedText = await AsyncStorage.getItem('walletSeed');
         console.log('senha' + password);
         console.log('seedText' + seedText);
         
-        lightwallet.keystore.createVault({
+        await lightwallet.keystore.createVault({
             password: password,
             seedPhrase: seedText,
             hdPathString: "m/0'/0'/0'"
@@ -156,9 +198,7 @@ class WalletService {
                 console.log('inside w3'+ web3);
 
             });
-            console.log('returned w3'+ web3);
         });
-        console.log('returned w3'+ web3);
         return web3;
     }
 }
