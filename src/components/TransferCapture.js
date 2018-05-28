@@ -4,15 +4,15 @@ import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './Home'
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Permissions from 'react-native-permissions';
+import { ActionButton } from 'react-native-material-ui';
 
-export default class ScannerScreen extends React.Component {
+export default class TransferCaptureScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       qrScanned:"",
     };
   }
-  
   componentDidMount(){
     this._requestCammeraPermission();
   }
@@ -28,19 +28,17 @@ export default class ScannerScreen extends React.Component {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <QRCodeScanner
+          style={styles.scanner}
           onRead={this.onSuccess.bind(this)}
           topContent={
             <Text style={styles.centerText}>
               Escaneado: {this.state.qrScanned}
             </Text>
           }
-          bottomContent={
-            <TouchableOpacity style={styles.buttonTouchable}>
-              <Text style={styles.buttonText}>Voltar</Text>
-            </TouchableOpacity>
-          }
         />
-
+            <ActionButton
+            icon='arrow-back'
+            onPress={() => this.props.navigation.goBack()}/>
       </View>
 
     );
@@ -49,10 +47,14 @@ export default class ScannerScreen extends React.Component {
     this.setState(previousState => {
       return { qrScanned: e.data};
     });
+    this.props.navigation.navigate('TransferConfirm', e.data)
   }
  
 }
 const styles = StyleSheet.create({
+  scanner:{
+    height: '90%'
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

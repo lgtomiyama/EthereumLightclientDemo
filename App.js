@@ -2,6 +2,9 @@
 import React, { Component } from 'react';
 import HomeScreen from './src/components/Home';
 import ScannerScreen from './src/components/Scanner';
+import TransferCaptureScreen from './src/components/TransferCapture';
+import TransferConfirmScreen from './src/components/TransferConfirm';
+import WalletService from './src/service/walletService';
 import {
   StackNavigator,
 } from 'react-navigation';
@@ -38,6 +41,17 @@ const AppStack = StackNavigator(
     Scanner: {
       screen: ScannerScreen,
       navigationOptions: { ScannerScreen: null },
+
+    },
+ 
+    TransferCapture: {
+      screen: TransferCaptureScreen,
+      navigationOptions: { TransferCapture: null },
+
+    },
+    TransferConfirm: {
+      screen: TransferConfirmScreen,
+      navigationOptions: { TransferConfirm: null },
 
     },
   },
