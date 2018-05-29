@@ -61,7 +61,6 @@ export default class PerfilScreen extends React.Component {
             icon='arrow-back'
             onPress={() => this.props.navigation.goBack()}/>
         </View>
-
       );
     }
   }

@@ -6,7 +6,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import Permissions from 'react-native-permissions';
 import { ActionButton } from 'react-native-material-ui';
 
-export default class TransferCaptureScreen extends React.Component {
+export default class BuyCaptureScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,7 +32,7 @@ export default class TransferCaptureScreen extends React.Component {
           onRead={this.onSuccess.bind(this)}
           topContent={
             <Text style={styles.centerText}>
-              Escaneie um QR Code de conta
+              Escaneie um QR Code de compra 
             </Text>
           }
         />
@@ -47,9 +47,9 @@ export default class TransferCaptureScreen extends React.Component {
     this.setState(previousState => {
       return { qrScanned: e.data};
     });
-    this.props.navigation.navigate('TransferConfirm', e.data)
+    console.log(e.data);
+    this.props.navigation.navigate('BuyConfirm',JSON.parse(e.data));
   }
- 
 }
 const styles = StyleSheet.create({
   scanner:{

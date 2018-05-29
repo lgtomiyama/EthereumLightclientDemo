@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './Home'
 import { ActionButton,Button } from 'react-native-material-ui';
 import WalletService from '../service/walletService';
-export default class TransferConfirmScreen extends React.Component {
+export default class BuyConfirmScreen extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -33,29 +33,23 @@ export default class TransferConfirmScreen extends React.Component {
           <ActionButton
           icon='arrow-back'
           onPress={() => this.props.navigation.navigate('Home')}/>
-          <Text>Transferir para:{'\n'}
-          {this.props.navigation.state.params}</Text>
-          <TextInput 
-              placeholder='Valor'
-              keyboardType='numeric'
-              style={styles.textInput}
-              onChangeText={(text) => this.setState({valorTransacao: text})}
-            />
+          <Text>Deseja comprar:{'\n'}
+          { this.props.navigation.state.params.name}</Text>
           <Button 
               primary 
-              text="Transferir"  title="" onPress={()=> this.transfer()} />
+              text="Comprar"  title="" onPress={()=> this.buy()} />
         </View>
 
       );
     }
   }
-  transfer(){
+  buy(){
     if(this.state.valorTransacao && this.state.valorTransacao==='0' ){
-      this.setState({processing:true});
-      this.settingsService.transfer(this.props.navigation.state.params,this.state.valorTransacao).then(() => 
-      {
-        this.setState({processing:false,});
-      });
+      // this.setState({processing:true});
+      // this.settingsService.transfer(this.props.navigation.state.params,this.state.valorTransacao).then(() => 
+      // {
+      //   this.setState({processing:false,});
+      // });
     }
 }
  

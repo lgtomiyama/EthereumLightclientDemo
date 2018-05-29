@@ -65,10 +65,11 @@ export default class HomeScreen extends React.Component {
 
             <ActionButton
               onPress={(e) => { this.clickMenu(e); }}
-              actions={[{ name: 'perfil', icon: 'account-circle', label: 'Perfil'},
-                        { name: 'quiz', icon: 'games', label: 'Quiz' },
-                        { name: 'comprar', icon: 'local-grocery-store', label: 'Comprar' },
-                        { name: 'transferir', icon: 'send', label: 'Transferir' },]}
+              actions={[
+                { name: 'reload', icon: 'autorenew', label: 'Atualizar Saldo' },
+                { name: 'perfil', icon: 'account-circle', label: 'Perfil'},
+                { name: 'comprar', icon: 'local-grocery-store', label: 'Comprar' },
+                { name: 'transferir', icon: 'send', label: 'Transferir' },]}
               icon="account-balance-wallet"
               transition="speedDial"
               />
@@ -90,27 +91,26 @@ export default class HomeScreen extends React.Component {
             />
             <Button 
             primary 
-            text="Primary" 
-            title="Login"
+            text="Login" 
             onPress={()=> this.login()} />
           </View>
         );
       }
     }
   }
-  async clickMenu(e){
+  clickMenu(e){
     switch (e) {
       case 'perfil':
         this.props.navigation.navigate('Perfil');
       break;
-      case 'quiz':
-
+      case 'reload':
+        this.reloadBalance();
       break;
       case 'transferir':
         this.props.navigation.navigate('TransferCapture');
       break;
       case 'comprar':
-        this.props.navigation.navigate('Scanner');
+        this.props.navigation.navigate('BuyCapture');
       break;    
       default:
         break;
@@ -124,7 +124,7 @@ export default class HomeScreen extends React.Component {
       this.setState({processing:false,});
     });
   }
-  reloadAcc(balance){
+  reloadAcc(){
     this.setState({processing:true,});
     this.settingsService.getWalletAdderess().then((account) => {
       console.log('Acc:'+ account);
@@ -138,12 +138,11 @@ export default class HomeScreen extends React.Component {
   }
   reloadBalance(){
     this.setState({processing:true,});
-    this.settingsService.getWalletBallance().then((balance) => {
-      console.log(balance);
-      this.setState({ 
-        balanceText: balance,
-        processing:false,
-      });
+    this.settingsService.getWalletBallance((balance) => {
+      this.setState({
+        balanceText:balance,
+        processing: false,
+      })
     });
   }
 }

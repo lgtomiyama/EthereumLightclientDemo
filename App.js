@@ -4,6 +4,8 @@ import HomeScreen from './src/components/Home';
 import ScannerScreen from './src/components/Scanner';
 import TransferCaptureScreen from './src/components/TransferCapture';
 import TransferConfirmScreen from './src/components/TransferConfirm';
+import BuyCaptureScreen from './src/components/BuyCapture';
+import BuyConfirmScreen from './src/components/BuyConfirm';
 import PerfilScreen from './src/components/Perfil';
 import WalletService from './src/service/walletService';
 import {
@@ -58,6 +60,16 @@ const AppStack = StackNavigator(
     TransferConfirm: {
       screen: TransferConfirmScreen,
       navigationOptions: { TransferConfirm: null },
+
+    },
+    BuyCapture: {
+      screen: BuyCaptureScreen,
+      navigationOptions: { BuyCapture: null },
+
+    },
+    BuyConfirm: {
+      screen: BuyConfirmScreen,
+      navigationOptions: { BuyConfirm: null },
 
     },
   },

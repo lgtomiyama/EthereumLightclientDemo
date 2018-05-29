@@ -13,7 +13,6 @@ class WalletService {
         if (instance === null) {
             instance = new WalletService();
         }
-        
         return instance;
     };
     constructor() {
@@ -99,27 +98,81 @@ class WalletService {
     getWalletPKey() {
         return WalletPKey;
     }
-    async getWalletBallance(){
-        let acBalance;
-        let nweb3;
-        if(web3 === null){
-            console.log('web3 null');
-            nweb3 = await this.createWeb3();
-            console.log(nweb3);
-        }else{
-            nweb3 = web3;
-        }
-        
-        await nweb3.eth.getBalance(walletAddress, async (err, data) => {
-            if (err) {
-                console.log(err);
-            } else {
-                acBalance = nweb3.utils.fromWei( data, 'ether');
-                await AsyncStorage.setItem('walletBalance', acBalance);
-                return acBalance;
-            }
+    async getWalletBallance(callback){
+        const password = await AsyncStorage.getItem('walletPassword');
+        const seedText = await AsyncStorage.getItem('walletSeed');
+        console.log('senha' + password);
+        console.log('seedText' + seedText);
+        var balance = '';
+        await lightwallet.keystore.createVault({
+            password: password,
+            seedPhrase: seedText,
+            hdPathString: "m/0'/0'/0'"
+        }, function (err, ks ) {
+            ks.keyFromPassword(password, function (err, pwDerivedKey) {
+                if (!ks.isDerivedKeyCorrect(pwDerivedKey)) {
+                    throw new Error("Incorrect derived key!");
+                }
+                try {
+                    ks.generateNewAddress(pwDerivedKey, 1);
+                } catch (err) {
+                    console.log(err);
+                    console.trace();
+                }
+                this.address = ks.getAddresses()[0];
+                this.prv_key = ks.exportPrivateKey(this.address, pwDerivedKey);
+                console.log('Created w3: ', this.address, this.prv_key);
+                var web3Provider = new HookedWeb3Provider({
+                    host: "https://net.everchain.tk",
+                    transaction_signer: ks
+                });
+                web3 = new Web3(web3Provider);
+                web3.eth.getBalance(this.address, async (err, data) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        let acBalance = web3.utils.fromWei( data, 'ether');
+                        await AsyncStorage.setItem('walletBalance', acBalance);
+                        callback(acBalance);
+                    }
+                    });
+            });
         });
-        return acBalance;
+        return balance;
+    }
+    async execSmartContract(){
+        const password = await AsyncStorage.getItem('walletPassword');
+        const seedText = await AsyncStorage.getItem('walletSeed');
+        console.log('senha' + password);
+        console.log('seedText' + seedText);
+        await lightwallet.keystore.createVault({
+            password: password,
+            seedPhrase: seedText,
+            hdPathString: "m/0'/0'/0'"
+        }, function (err, ks ) {
+            ks.keyFromPassword(password, function (err, pwDerivedKey) {
+                if (!ks.isDerivedKeyCorrect(pwDerivedKey)) {
+                    throw new Error("Incorrect derived key!");
+                }
+                try {
+                    ks.generateNewAddress(pwDerivedKey, 1);
+                } catch (err) {
+                    console.log(err);
+                    console.trace();
+                }
+                this.address = ks.getAddresses()[0];
+                this.prv_key = ks.exportPrivateKey(this.address, pwDerivedKey);
+                console.log('Created w3: ', this.address, this.prv_key);
+                var web3Provider = new HookedWeb3Provider({
+                    host: "https://net.everchain.tk",
+                    transaction_signer: ks
+                });
+                web3 = new Web3(web3Provider);
+                var Everchain = web3.eth.contract(_abi);
+                // Obter instância do smart contract
+                var everchain = Everchain.at(_address);
+            })
+        });
     }
     async transfer(toAccount,transferValue){
         const password = await AsyncStorage.getItem('walletPassword');
@@ -148,12 +201,16 @@ class WalletService {
                     host: "https://net.everchain.tk",
                     transaction_signer: ks
                 });
+                console.log('Acc: '+this.address);
                 console.log('to: '+toAccount);
                 console.log('v: '+transferValue);
+                web3 = new Web3(web3Provider);
                 web3.eth.sendTransaction({                    
                     from: this.address,
                     to: toAccount, 
-                    value: transferValue}, async (err, data) => {
+                    value: web3.utils.toWei(transferValue, 'ether'),
+                    password: password,
+                    gas: 4700000,}, async (err, data) => {
                         if (err) {
                             console.log(err);
                         } else {
