@@ -50,7 +50,7 @@ export default class TransferConfirmScreen extends React.Component {
     }
   }
   transfer(){
-    if(this.state.valorTransacao && this.state.valorTransacao==='0' ){
+    if(this.state.valorTransacao && this.state.valorTransacao!=='0' ){
       this.setState({processing:true});
       this.settingsService.transfer(this.props.navigation.state.params,this.state.valorTransacao).then(() => 
       {

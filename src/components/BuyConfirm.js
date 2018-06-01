@@ -44,13 +44,13 @@ export default class BuyConfirmScreen extends React.Component {
     }
   }
   buy(){
-    if(this.state.valorTransacao && this.state.valorTransacao==='0' ){
-      // this.setState({processing:true});
-      // this.settingsService.transfer(this.props.navigation.state.params,this.state.valorTransacao).then(() => 
-      // {
-      //   this.setState({processing:false,});
-      // });
-    }
+
+       this.setState({processing:true});
+      this.settingsService.execSmartContract().then(() => 
+      {
+        this.setState({processing:false,});
+      });
+    
 }
  
 }

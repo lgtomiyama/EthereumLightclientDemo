@@ -84,13 +84,10 @@ class WalletService {
         console.log(receiveWalletBalance);
         return walletBalance;
     }
-    onSuccess(e) {
-        Linking
-        .openURL(e.data)
-        .catch(err => console.error('An error occured', err));
-    }
-    // getWalletAdderess() {
-    //     return walletAddress;
+    // onSuccess(e) {
+    //     Linking
+    //     .openURL(e.data)
+    //     .catch(err => console.error('An error occured', err));
     // }
     getWalletSeed() {
         return walletSeed;
@@ -135,7 +132,7 @@ class WalletService {
                         await AsyncStorage.setItem('walletBalance', acBalance);
                         callback(acBalance);
                     }
-                    });
+                });
             });
         });
         return balance;
@@ -145,11 +142,16 @@ class WalletService {
         const seedText = await AsyncStorage.getItem('walletSeed');
         console.log('senha' + password);
         console.log('seedText' + seedText);
+        var balance = '';
         await lightwallet.keystore.createVault({
             password: password,
             seedPhrase: seedText,
             hdPathString: "m/0'/0'/0'"
         }, function (err, ks ) {
+            ks.passwordProvider = function(callback){
+                callback(null, password);
+              };
+          
             ks.keyFromPassword(password, function (err, pwDerivedKey) {
                 if (!ks.isDerivedKeyCorrect(pwDerivedKey)) {
                     throw new Error("Incorrect derived key!");
@@ -168,10 +170,44 @@ class WalletService {
                     transaction_signer: ks
                 });
                 web3 = new Web3(web3Provider);
-                var Everchain = web3.eth.contract(_abi);
-                // Obter instância do smart contract
-                var everchain = Everchain.at(_address);
-            })
+                var _options = {
+                    from:this.address ,
+                    gas: 4700000
+                };
+                fetch('http://54.90.43.70:3000/abi')
+                    .then((response) => response.json())
+                    .then((_abi) => {
+                        console.log(_abi);
+                        var Everchain = new web3.eth.Contract(_abi);
+                        
+                        fetch('http://54.90.43.70:3000/address')
+                            .then((response) => response.json())
+                            .then((_address) => {
+                                console.log(_address);
+                                console.log(Everchain);
+                                Everchain.options.address = _address.address;
+                                //var everchain = Everchain.at(_address);
+                                const PRODATA = {
+                                    name: 'Name Test',
+                                    company: 'Company Test',
+                                    email: 'name@company.com',
+                                    mobile: '119930000',
+                                    position: 'Position Test'
+                                  };
+                                  Everchain.methods.prodata(PRODATA.name, PRODATA.company, PRODATA.email, PRODATA.mobile, PRODATA.position).send(_options)
+                                  .then(function(receipt){
+                                      console.log(receipt);
+                                  });
+                                console.log('passou' + JSON.stringify(_options));
+                            })
+                            .catch((error) => {
+                            console.error(error);
+                        });
+                    })
+                    .catch((error) => {
+                    console.error(error);
+                });
+            });
         });
     }
     async transfer(toAccount,transferValue){
@@ -184,6 +220,9 @@ class WalletService {
             seedPhrase: seedText,
             hdPathString: "m/0'/0'/0'"
         }, function (err, ks ) {
+            ks.passwordProvider = function(callback){
+                callback(null, password);
+              };
             ks.keyFromPassword(password, function (err, pwDerivedKey) {
                 if (!ks.isDerivedKeyCorrect(pwDerivedKey)) {
                     throw new Error("Incorrect derived key!");

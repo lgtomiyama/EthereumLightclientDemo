@@ -105,6 +105,7 @@ export default class HomeScreen extends React.Component {
       break;
       case 'reload':
         this.reloadBalance();
+        //this.settingsService.execSmartContract();
       break;
       case 'transferir':
         this.props.navigation.navigate('TransferCapture');
